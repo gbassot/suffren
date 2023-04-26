@@ -1,0 +1,10 @@
+<form [formGroup]="formGroup">
+  <label class="d-none"
+       #cell
+       [for]="'switch'+lineIndex+'-'+cellIndex"
+  ></label>
+  <p-inputSwitch
+    [inputId]="'switch'+lineIndex+'-'+cellIndex"
+    [formControlName]="cellDefinition.formControlName"
+  ></p-inputSwitch>
+</form>

@@ -1,0 +1,14 @@
+<form [formGroup]="formGroup">
+  <div *ngIf="cellDefinition.readOnly || !isActiveCell(activeCell$ | async)" class="cell-min">
+    {{getLineValue(cellDefinition.formControlName)}}
+  </div>
+  <p-autoComplete
+    *ngIf="isActiveCell(activeCell$ | async)"
+    #cell
+    [formControlName]="cellDefinition.formControlName"
+    [suggestions]="suggestions"
+    (completeMethod)="searchShape($event)"
+  ></p-autoComplete>
+</form>
+
+

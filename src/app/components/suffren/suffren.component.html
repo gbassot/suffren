@@ -1,0 +1,191 @@
+<div class="row mt-3">
+  <div class="col">
+    <p-panel header="Header">
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+    </p-panel>
+
+    <p-accordion [multiple]="true">
+      <p-accordionTab header="Commentaires sur document">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </p-accordionTab>
+      <p-accordionTab header="Commerce">
+        <p>
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+          ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+        </p>
+      </p-accordionTab>
+      <p-accordionTab header="Production/Expédition">
+        <p>
+          At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+          qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+        </p>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</div>
+<p-button icon="pi pi-search" styleClass="p-button-rounded p-button-primary" *ngIf="expandComponent$|async" (click)="toggleComponent(false)"></p-button>
+<p-button icon="pi pi-search" styleClass="p-button-rounded p-button-secondary p-button-outlined" *ngIf="!(expandComponent$|async)" (click)="toggleComponent(true)"></p-button>
+<div class="row mt-3">
+  <div class="col"
+     cdkDropList
+     (cdkDropListDropped)="drop($event)">
+
+    <div class="row fw-semibold text-muted">
+      <div class="col-2 text-start">Description</div>
+      <div class="col-1 text-end">Quantité</div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end">Prix unitaire</div>
+      <div class="col-1 text-end">Cout de revient</div>
+      <div class="col-1 text-end">Marge</div>
+      <div class="col-1 text-end">Discount</div>
+      <div class="col-1 text-end">Total</div>
+    </div>
+    <ng-container *ngFor="let line of tableau$|async; let index = index">
+      <div [ngClass]="'line '+(index === (currentLineIndex$|async)?'active':'')" (click)="selectLine(index)" cdkDrag [id]="'line-'+index">
+        <div class="line-summary" (contextmenu)="onLinkRightClicked(index, null, null, $event)">
+          <div class="row">
+            <div class="col-2 text-start">
+              <div class="flex justify-content-center gap-2">
+                <strong>#{{line.id}}</strong> {{line.description}}
+                <p-message *ngIf="line.warning" severity="warn" [text]="line.warning"></p-message>
+              </div>
+              </div>
+            <div class="col-1 text-end">{{line.quantity}}P</div>
+            <div class="col-1 text-end"></div>
+            <div class="col-1 text-end"></div>
+            <div class="col-1 text-end">{{line.unitPrice| currency:'EUR'}}</div>
+            <div class="col-1 text-end">{{line.unitCost| currency:'EUR'}}</div>
+            <div class="col-1 text-end">
+              <p-badge  size="large" [value]="line.margin+'%'" [severity]="line.margin<10?'danger':line.margin<20?'warning':'success'"></p-badge>
+            </div>
+
+            <div class="col-1 text-end">10%</div>
+            <div class="col-1 text-end fw-bold fs-5">{{line.totalPrice | currency:'EUR'}}</div>
+          </div>
+
+        </div>
+        <div *ngIf="expandComponent$|async" cdkDropList (cdkDropListDropped)="dropComponent($event, index)" class="line-components">
+          <ng-container *ngFor="let component of line.components;let componentIndex = index">
+            <ng-container *ngIf="component.description!==''">
+              <div class="row line-component text-secondary" cdkDrag (contextmenu)="onLinkRightClicked(index, componentIndex, component, $event)">
+                <div class="col-2 text-start ps-5">
+                  <i class="pi pi-align-justify grab-handle" cdkDragHandle></i>&nbsp;
+                  <ng-container *ngIf="component.type==='material'" >
+                    <span class="fw-normal">{{component.description}}</span>&nbsp;<span class="fw-lighter">{{component.lengthType}}{{component.length}}mm</span>
+                  </ng-container>
+                  <ng-container *ngIf="component.type==='service'" class="fw-lighter">
+                    {{component.description}}
+                  </ng-container>
+                </div>
+                <div class="col-1 text-end">{{component.quantity}}P</div>
+                <div class="col-1 text-end"></div>
+                <div class="col-1 text-end"></div>
+                <div class="col-1 text-end">{{component.unitPrice| currency:'EUR'}}</div>
+                <div class="col-1 text-end">{{component.unitCost| currency:'EUR'}}</div>
+                <div class="col-1 text-end bg-opacity-10">
+                  <p-badge
+                    [value]="component.margin+'%'" [severity]="component.margin<10?'danger':component.margin<20?'warning':'success'"></p-badge>
+                </div>
+                <div class="col-1 text-end"></div>
+                <div class="col-1 text-end fw-semibold fs-6">{{component.total | currency:'EUR'}}</div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+    <div class="row bg-success p-2 text-dark bg-opacity-10 mt-3">
+      <div class="col-2 text-start"></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end"><p-badge
+        size="xlarge"
+        [value]="((grandTotal$|async)?.margin??'')+'%'" [severity]="((grandTotal$|async)?.margin??0)<10?'danger':((grandTotal$|async)?.margin??0)<20?'warning':'success'"></p-badge></div>
+      <div class="col-1 text-end"></div>
+      <div class="col-1 text-end fw-bold fs-4 text-secondary">{{ ((grandTotal$|async)?.totalPrice| currency:'EUR') }}</div>
+    </div>
+  </div>
+</div>
+<p-button label="Add line" (onClick)="addLine($event)"></p-button>
+<p-contextMenu appendTo="body" #rightClickMenu [model]="items"></p-contextMenu>
+<div>current line : {{currentLineIndex$ | async}}</div>
+<div>line depth : {{lineEntered$ | async}}</div>
+<div>Active section : {{activeSectionDepth1$ | async}}</div>
+
+<div class="card flex justify-content-center">
+  <p-sidebar
+    [(visible)]="sideBarVisible"
+    [styleClass]="'sidebar1'"
+    position="right"
+    (onHide)="sideBarClosed()"
+  >
+    <ng-template pTemplate="header">
+      <h3>Edition ligne {{((currentLineIndex$ | async)??0)+1}}</h3>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <app-line-form></app-line-form>
+    </ng-template>
+    <ng-template pTemplate="footer">Footer Content</ng-template>
+  </p-sidebar>
+</div>
+
+
+<div class="card flex justify-content-center">
+  <ng-container ></ng-container>
+  <p-sidebar
+    [(visible)]="sideBar2Visible"
+    [styleClass]="'sidebar2'"
+    position="right"
+    (onHide)="sideBarClosed()"
+  >
+    <ng-template pTemplate="header">
+      <h3>Edition des parametres spécifiques de ligne {{((currentLineIndex$ | async)??0)+1}}</h3>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <ng-container *ngIf="currentLine$ | async as line">
+        <div class="row mt-2">
+          <div class="col-12">
+            <p-panel header="Commentaires">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+          <div class="col-12 mt-2">
+            <p-panel header="Livraison">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+          <div class="col-12 mt-2">
+            <p-panel header="Facturation">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+          <div class="col-12 mt-2">
+            <p-panel header="Production">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+        </div>
+      </ng-container>
+    </ng-template>
+    <ng-template pTemplate="footer">Footer Content</ng-template>
+  </p-sidebar>
+</div>
+

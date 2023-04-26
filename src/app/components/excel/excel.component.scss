@@ -1,0 +1,43 @@
+.cdk-drag-preview{
+  opacity: 30%;
+  background-color: grey;
+}
+.cdk-drag-placeholder {
+  background-color: lightskyblue;
+}
+
+.table {
+  width:500px;
+}
+
+.line {
+  display: flex;
+}
+
+.cell {
+  height:30px;
+  border-top:1px solid black;
+  border-right:1px solid black;
+  background-color: grey;
+  color: white;
+  font-size: 11pt;
+  text-align: center;
+}
+.cell-min {
+  padding-top:5px;
+  padding-left:13px;
+}
+.cell-drag {
+  padding-top:5px;
+  padding-left:10px;
+  width:38px;
+}
+.cell-first {
+  border-left:1px solid black;
+}
+.cell-dropdown {
+  width:77px;
+}
+.cell-switch {
+  width:56px;
+}

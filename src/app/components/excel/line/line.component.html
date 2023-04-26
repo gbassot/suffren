@@ -1,0 +1,64 @@
+<div *ngIf="line" class="line" (click)="stopPropagation($event)">
+  <div cdkDragHandle class="cell cell-first cell-drag">
+    <i class="pi pi-bars"></i>
+  </div>
+  <div *ngFor="let cellDefinition of (cellDefinitions$|async); let cellIndex = index"
+       [class]="getCellClass(isActiveCell(cellIndex+1, activeCell$ | async))"
+       [style.width]="cellDefinition.width+'px'"
+       (mouseup)="selectCell($event,cellIndex+1)"
+  >
+    <app-cell-text
+      *ngIf="cellDefinition.type==='text'"
+      [cellDefinition]="cellDefinition"
+      [line]="line"
+      [lineIndex]="lineIndex"
+      [cellIndex]="cellIndex+1"
+      [formGroup]="lineForm"
+    ></app-cell-text>
+
+    <app-cell-input
+      *ngIf="cellDefinition.type==='input'"
+      [cellDefinition]="cellDefinition"
+      [line]="line"
+      [lineIndex]="lineIndex"
+      [cellIndex]="cellIndex+1"
+      [formGroup]="lineForm"
+    ></app-cell-input>
+
+    <app-cell-dropdown
+      *ngIf="cellDefinition.type==='dropdown'"
+      [cellDefinition]="cellDefinition"
+      [line]="line"
+      [lineIndex]="lineIndex"
+      [cellIndex]="cellIndex+1"
+      [formGroup]="lineForm"
+    ></app-cell-dropdown>
+
+    <app-cell-autocomplete
+      *ngIf="cellDefinition.type==='autocomplete'"
+      [cellDefinition]="cellDefinition"
+      [line]="line"
+      [lineIndex]="lineIndex"
+      [cellIndex]="cellIndex+1"
+      [formGroup]="lineForm"
+    ></app-cell-autocomplete>
+
+    <app-cell-switch
+      *ngIf="cellDefinition.type==='switch'"
+      [cellDefinition]="cellDefinition"
+      [line]="line"
+      [lineIndex]="lineIndex"
+      [cellIndex]="cellIndex+1"
+      [formGroup]="lineForm"
+    ></app-cell-switch>
+
+    <app-cell-button
+      *ngIf="cellDefinition.type==='button'"
+      [cellDefinition]="cellDefinition"
+      [line]="line"
+      [lineIndex]="lineIndex"
+      [cellIndex]="cellIndex+1"
+      [formGroup]="lineForm"
+    ></app-cell-button>
+  </div>
+</div>

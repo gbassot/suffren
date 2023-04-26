@@ -1,0 +1,11 @@
+<form [formGroup]="formGroup">
+  <div *ngIf="cellDefinition.readOnly || !isActiveCell(activeCell$ | async)" class="cell-min">
+    {{getLineValue(cellDefinition.formControlName)}}
+  </div>
+  <p-dropdown
+    *ngIf="isActiveCell(activeCell$ | async)"
+    #cell
+    [formControlName]="cellDefinition.formControlName"
+    [options]="options"
+  ></p-dropdown>
+</form>

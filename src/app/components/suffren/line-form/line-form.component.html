@@ -1,0 +1,119 @@
+<ng-container *ngIf="currentLine$ | async as line">
+  <form [formGroup]="lineForm">
+    <div class="row mt-2">
+      <div class="col-12">
+        <p-panel header="Produit" [styleClass]="isActive(activeSectionDepth1$|async,0)?'active':''">
+          <div class="mt-2 row">
+            <div class="col">
+              <span class="p-float-label">
+                <input #firstInput pInputText id="shape" formControlName="shape" />
+                <label htmlFor="shape">Shape</label>
+              </span>
+            </div>
+            <div class="col">
+               <span class="p-float-label">
+                <input pInputText id="grade" formControlName="grade" />
+                <label htmlFor="grade">Grade</label>
+              </span>
+            </div>
+            <div class="col">
+               <span class="p-float-label">
+                <input pInputText id="dimensions" formControlName="dimensions" />
+                <label htmlFor="dimensions">Dimensions</label>
+              </span>
+            </div>
+            <div class="col">
+               <span class="p-float-label">
+                  <p-dropdown
+                    [options]="options"
+                    formControlName="lengthType"
+                    placeholder="Length type"
+                    optionValue="value"
+                    optionLabel="label"
+                    inputId="lengthType"></p-dropdown>
+                  <label for="lengthType">Length type</label>
+              </span>
+            </div>
+            <div class="col">
+               <span class="p-float-label">
+                <p-inputNumber id="length" formControlName="length" />
+                <label htmlFor="length">Length</label>
+              </span>
+            </div>
+
+
+          </div>
+
+        </p-panel>
+      </div>
+      <div class="col-8 mt-2">
+        <p-panel header="Prix" [styleClass]="isActive(activeSectionDepth1$|async,1)?'active':''">
+          <div class="row mt-2">
+            <div class="col">
+              <label class="d-none"
+                     #secondInput
+                     [for]="'secondInput'"
+              ></label>
+              <span class="p-float-label">
+                  <p-inputNumber
+                    mode="currency"
+                    currency="EUR"
+                    locale="fr-FR"
+                    inputId="secondInput"
+                    [step]="0"
+                    formControlName="unitPrice"> </p-inputNumber>
+                    <label htmlFor="number-input">Prix unitaire</label>
+                  </span>
+            </div>
+            <div class="col">
+                  <span class="p-float-label">
+                  <p-inputNumber
+                    mode="currency"
+                    currency="EUR"
+                    locale="fr-FR"
+                    [disabled]="true"
+                    formControlName="unitPrice"> </p-inputNumber>
+                    <label htmlFor="number-input">Prix système</label>
+                  </span>
+            </div>
+            <div class="col">
+                  <span class="p-float-label">
+                  <p-inputNumber
+                    formControlName="quantity"> </p-inputNumber>
+                  <label htmlFor="number-input">Quantité</label>
+                  </span>
+            </div>
+          </div>
+        </p-panel>
+      </div>
+      <div class="col-4 mt-2">
+        <div>
+          <p-panel header="Historique client">
+            <p>
+              10/04/23 : 3pcs / 3€ pieces
+            </p>
+            <p>
+              01/02/23 : 3pcs / 2.7€ pieces
+            </p>
+          </p-panel>
+        </div>
+        <div class="mt-2">
+          <p-panel header="Stock">
+            <p>
+              Des infos sur le stock
+            </p>
+          </p-panel>
+        </div>
+      </div>
+      <div class="col-12 mt-2">
+        <p-panel header="Frais additionnels" [styleClass]="isActive(activeSectionDepth1$|async,2)?'active':''">
+          <ng-container *ngFor="let component of line.components">
+            <p *ngIf="component.type==='service'">
+              {{component.description}}
+            </p>
+          </ng-container>
+        </p-panel>
+      </div>
+    </div>
+  </form>
+</ng-container>
