@@ -1,0 +1,10 @@
+<form [formGroup]="formGroup">
+  <div *ngIf="cellDefinition.readOnly || !isActiveCell(activeCell$ | async)" class="cell-min">
+    {{getLineValue(cellDefinition.formControlName)}}
+  </div>
+  <input
+    *ngIf="isActiveCell(activeCell$ | async)"
+    #cell
+    [formControlName]="cellDefinition.formControlName"
+    pInputText/>
+</form>

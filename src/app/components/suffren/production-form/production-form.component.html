@@ -1,0 +1,50 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="closed()"
+  [closeOnEscape]="false"
+  [style]="{width: '40vw'}"
+  *ngIf="currentLine$|async as line">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold fw-bold">Paramètres Production / Expédition de la ligne {{line.id}} {{line.description}} x {{line.quantity}}</span>
+  </ng-template>
+  <div class="row">
+    <div class="col-6">
+      <div class="row">
+        <div class="col mt-3">
+          <span class="p-float-label">
+              <input pInputText id="delay"/>
+              <label htmlFor="delay">Priorité de délai</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="expeditionDate"/>
+              <label htmlFor="expeditionDate">Date d'expédition estimée</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="packaging"/>
+              <label htmlFor="packaging">Type emballage</label>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="row">
+        <div class="col mt-3">
+            <span class="p-float-label">
+              <input pInputText id="via"/>
+              <label htmlFor="via">Via directe</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="tournee"/>
+              <label htmlFor="tournee">Code tournée</label>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>

@@ -1,0 +1,212 @@
+<p-toast position="top-center"></p-toast>
+<app-header></app-header>
+
+<ng-container *ngIf="subForms$|async as subforms">
+  <span pTooltip="Afficher le détails des lignes">
+    <p-button
+      icon="pi pi-search"
+      [styleClass]="'p-button-rounded '+(subforms.showComponents.show?'p-button-primary':'p-button-secondary p-button-outlined')"
+      (click)="toggleComponent('showComponents',!subforms.showComponents.show)">
+    </p-button>
+  </span>
+  &nbsp;
+  <span pTooltip="Afficher les commentaires">
+    <p-button
+      icon="pi pi-comment"
+      [styleClass]="'p-button-rounded '+(subforms.showComments.show?'p-button-primary':'p-button-secondary p-button-outlined')"
+      (click)="toggleComponent('showComments',!subforms.showComments.show)">
+    </p-button>
+  </span>
+  &nbsp;
+  <span pTooltip="Afficher les aides contextuelles">
+    <p-button
+      icon="pi pi-question"
+      [styleClass]="'p-button-rounded '+(subforms.showHelp.show?'p-button-primary':'p-button-secondary p-button-outlined')"
+      (click)="toggleComponent('showHelp',!subforms.showHelp.show)">
+    </p-button>
+  </span>
+</ng-container>
+&nbsp;
+
+<div class="row mt-3">
+  <div class="col-8"
+     cdkDropList
+     (cdkDropListDropped)="drop($event)"
+  >
+    <div class="header-line" (contextmenu)="onLinkRightClicked(null, null, null, $event)">
+      <div class="row fw-semibold text-muted">
+        <div class="col-4 text-center">Description</div>
+        <div class="col-1 text-end">Quantité</div>
+        <div class="col-4 text-end"></div>
+        <div class="col-1 text-end">Prix unitaire</div>
+        <div class="col-1 text-end">Marge</div>
+        <div class="col-1 text-end pe-3">Total</div>
+      </div>
+    </div>
+    <ng-container *ngFor="let line of tableau$|async; let index = index">
+      <div
+        [ngClass]="'line '+(((currentLineIndex$|async)!==null && index === (currentLineIndex$|async))?'active':'')"
+        (click)="selectLine(index, false)"
+        cdkDrag
+      >
+        <div class="line-summary" (contextmenu)="onLinkRightClicked(index, null, null, $event)"
+             [pTooltip]="(subForms$|async)?.showHelp?.show?'Clic droit pour le menu contextuel à la ligne':''" tooltipPosition="top">
+          <div class="row" cdkDragHandle>
+            <div class="col-4 ps-3 text-start"
+                 (dblclick)="editLine(index,'productForm')"
+                 [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic la description pour éditer le produit':''"
+            >
+              <div class="flex justify-content-center gap-2">
+                <strong>#{{line.id}}</strong> {{line.description}}
+                <p-message *ngIf="line.warning" severity="error" [text]="line.warning"></p-message>
+              </div>
+              </div>
+            <div class="col-1 text-end">{{line.quantity}}P</div>
+            <div class="col-4 text-end"></div>
+            <div class="col-1 text-end"
+                 (dblclick)="editLine(index,'priceForm')"
+                 [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic sur le prix pour éditer le prix':''"
+            >{{line.unitPrice| currency:'EUR'}}</div>
+            <div class="col-1 text-end"><p-badge [value]="line.margin+'%'" [severity]="line.margin<10?'danger':line.margin<20?'warning':'success'"></p-badge></div>
+            <div class="col-1 text-end fw-bold pe-3"
+                 (dblclick)="editLine(index,'discountForm')"
+                 [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic sur le total pour attribuer une remise':''"
+            >
+              <div *ngIf="line.discount">
+                <p-badge *ngIf="line.discount" [value]="'-'+line.discount+'%'" severity="info"></p-badge>&nbsp;
+                <span class="text-decoration-line-through fw-normal text-muted">({{(line.totalPrice+line.totalDiscount)|currency:'EUR'}})</span>
+              </div>
+              <div>{{line.totalPrice | currency:'EUR'}}</div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="(subForms$|async)?.showComponents?.show" cdkDropList (cdkDropListDropped)="dropComponent($event, index)">
+          <ng-container *ngFor="let component of line.components;let componentIndex = index">
+            <div
+              class="row line-component text-secondary"
+              cdkDrag
+              (contextmenu)="onLinkRightClicked(index, componentIndex, component, $event)"
+              (dblclick)="editComponent(index, componentIndex,'serviceForm', component.type)"
+              [pTooltip]="(subForms$|async)?.showHelp?.show?'Clic droit pour le menu contextuel au composant':''" tooltipPosition="bottom"
+            >
+              <div class="col-4 text-start ps-5">
+                <ng-container *ngIf="component.type==='long'" >
+                  <span class="fw-normal text-dark">{{$any(component).shape}}, {{$any(component).grade}}, {{$any(component).dimensions}}</span>&nbsp;
+                    <span *ngIf="$any(component).lengthType" class="fw-lighter">{{$any(component).lengthType}}{{$any(component).length}}mm</span>
+                </ng-container>
+                <ng-container *ngIf="component.type==='plat'" >
+                  <span class="fw-normal text-dark">{{$any(component).shape}}, {{$any(component).grade}}, {{$any(component).dimensions}}</span>&nbsp;
+                </ng-container>
+                <ng-container *ngIf="component.type==='psp'" >
+                  <span class="fw-normal text-dark">RC {{$any(component).grade}}, {{$any(component).dimensions}}</span>&nbsp;
+                </ng-container>
+                <ng-container *ngIf="component.type==='service'" class="fw-lighter">
+                  {{component.description}}
+                </ng-container>
+              </div>
+              <div class="col-1 text-end">x{{component.quantity}}</div>
+              <div class="col-4 text-end"></div>
+              <div class="col-1 text-end">{{component.unitPrice| currency:'EUR'}}</div>
+              <div class="col-1 text-end bg-opacity-10">
+                <span [ngClass]="component.margin<10?'text-danger':component.margin<20?'text-primary':'text-success'">{{component.margin}}%</span>
+              </div>
+              <div class="col-1 text-end fw-semibold pe-3">{{component.total | currency:'EUR'}}</div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div [id]="'line-'+index" class="scroll-target"></div>
+    </ng-container>
+    <div class="grand-total" (contextmenu)="onLinkRightClicked(null, null, null, $event)">
+      <div class="row p-2 text-dark mt-3">
+        <div class="col-9 text-start"></div>
+        <div class="col-1 text-end"><p-badge
+          size="large"
+          [value]="((grandTotal$|async)?.margin??'')+'%'" [severity]="((grandTotal$|async)?.margin??0)<10?'danger':((grandTotal$|async)?.margin??0)<20?'warning':'success'"></p-badge></div>
+        <div class="col-2 text-end fw-bolder fs-5 text-dark">{{ ((grandTotal$|async)?.totalPrice| currency:'EUR') }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <app-keyboard-nav></app-keyboard-nav>
+  </div>
+</div>
+<app-discount-form></app-discount-form>
+<app-price-form></app-price-form>
+<app-product-form></app-product-form>
+<app-service-form></app-service-form>
+<app-product-selector></app-product-selector>
+<app-comment-form></app-comment-form>
+<app-commercial-form></app-commercial-form>
+<app-production-form></app-production-form>
+<p-contextMenu appendTo="body" #rightClickMenu [model]="items"></p-contextMenu>
+
+<div class="card flex justify-content-center">
+  <p-sidebar
+    [(visible)]="sideBarVisible"
+    [styleClass]="'sidebar1'"
+    [closeOnEscape]="false"
+    position="right"
+    (onHide)="sideBarClosed()"
+  >
+    <ng-template pTemplate="header">
+      <h3>Edition ligne {{currentLineIndex$ | async}}</h3>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <app-line-form></app-line-form>
+    </ng-template>
+    <ng-template pTemplate="footer">Footer Content</ng-template>
+  </p-sidebar>
+</div>
+
+
+<div class="card flex justify-content-center">
+  <ng-container ></ng-container>
+  <p-sidebar
+    [(visible)]="sideBar2Visible"
+    [styleClass]="'sidebar2'"
+    [closeOnEscape]="false"
+    position="right"
+    (onHide)="sideBarClosed()"
+  >
+    <ng-template pTemplate="header">
+      <h3>Edition des parametres spécifiques de ligne {{currentLineIndex$ | async}}</h3>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <ng-container *ngIf="currentLine$ | async as line">
+        <div class="row mt-2">
+          <div class="col-12">
+            <p-panel header="Commentaires">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+          <div class="col-12 mt-2">
+            <p-panel header="Livraison">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+          <div class="col-12 mt-2">
+            <p-panel header="Facturation">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+          <div class="col-12 mt-2">
+            <p-panel header="Production">
+              <p>
+                Lorem ipsum
+              </p>
+            </p-panel>
+          </div>
+        </div>
+      </ng-container>
+    </ng-template>
+    <ng-template pTemplate="footer">Footer Content</ng-template>
+  </p-sidebar>
+</div>
+

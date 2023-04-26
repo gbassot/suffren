@@ -1,0 +1,81 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="closed()"
+  [closeOnEscape]="false"
+  [style]="{width: '40vw'}"
+  *ngIf="currentLine$|async as line">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold fw-bold">Paramètres Commerce de la ligne {{line.id}} {{line.description}} x {{line.quantity}}</span>
+  </ng-template>
+  <div class="row">
+    <div class="col-6">
+      <div class="row">
+        <div class="col mt-3">
+          <span class="p-float-label">
+              <input pInputText id="clientRef"/>
+              <label htmlFor="clientRef">Référence client</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="shippingDelay"/>
+              <label htmlFor="shippingDelay">Délais de livraison</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="venteExcept"/>
+              <label htmlFor="venteExcept">Vente exceptionnelle</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="surplus"/>
+              <label htmlFor="surplus">Surplus automatique de commande</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="duty"/>
+              <label htmlFor="duty">Vendor declaration of duty</label>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="row">
+        <div class="col mt-3">
+            <span class="p-float-label">
+              <input pInputText id="contrats"/>
+              <label htmlFor="contrats">Gestion des contrats</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="specifications"/>
+              <label htmlFor="specifications">Spécifications</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="normes"/>
+              <label htmlFor="normes">Type de normes</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="certif"/>
+              <label htmlFor="certif">Certificat avec/séparé de la livraison</label>
+          </span>
+        </div>
+        <div class="col mt-4">
+            <span class="p-float-label">
+              <input pInputText id="designation"/>
+              <label htmlFor="designation">Désignation courte</label>
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</p-dialog>
