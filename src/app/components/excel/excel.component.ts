@@ -1,7 +1,6 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {OpportunityActions, TableauApiActions} from "../../state/opportunity.action";
-import {Line} from "../../model/data/line.model";
+import {OpportunityActions} from "../../state/opportunity.action";
 import {
   selectActiveCell,
   selectCellDefinitions, selectHistory, selectHistoryStep,

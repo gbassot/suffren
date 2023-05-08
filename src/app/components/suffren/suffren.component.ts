@@ -15,6 +15,8 @@ import {ContextMenu} from "primeng/contextmenu";
 import {IComponent, ProductType} from "../../model/data/icomponent.model";
 import {ComponentManagerService} from "../../services/component-manager.service";
 import {RightClickService} from "../../services/right-click.service";
+import {selectCurrentOpportunity} from "../../state/quote.selector";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-suffren',
@@ -23,6 +25,7 @@ import {RightClickService} from "../../services/right-click.service";
 })
 export class SuffrenComponent implements OnInit, OnDestroy{
   @ViewChild('rightClickMenu') rightClickMenu: ContextMenu;
+  opportunity$ = this.store.select(selectCurrentOpportunity);
   tableau$ = this.store.select(selectTableau);
   currentLineIndex$ = this.store.select(selectCurrentLineIndex);
   currentLine$ = this.store.select(selectCurrentLine);
@@ -39,7 +42,8 @@ export class SuffrenComponent implements OnInit, OnDestroy{
   constructor(
     private store: Store,
     private componentManager: ComponentManagerService,
-    private rightClick: RightClickService
+    private rightClick: RightClickService,
+    private router: Router
   ) {}
 
   sideBarClosed(): void {
@@ -62,6 +66,16 @@ export class SuffrenComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
+    this.opportunity$.pipe(
+      takeUntil(this.destroy$),
+      tap((opportunity)=> {
+        if(opportunity) {
+          this.store.dispatch(OpportunityActions.loadOpportunity({opportunity}));
+        } else {
+          this.router.navigate(['/'])
+        }
+      })
+    ).subscribe();
     this.tableau$.pipe(
       takeUntil(this.destroy$),
       tap((tableau)=> {
@@ -96,9 +110,10 @@ export class SuffrenComponent implements OnInit, OnDestroy{
     this.store.dispatch(SuffrenActions.openSubForm({key: subForm, display:{show}}))
   }
 
-  editLine(lineId:number, formKey:string): void {
+  editLine(event: any, lineId:number, formKey:string): void {
     this.store.dispatch(SuffrenActions.selectLine({lineId}))
     this.store.dispatch(SuffrenActions.openSubForm({key:formKey, display:{show:true}}))
+    event.stopPropagation()
   }
 
   editComponent(lineId:number, componentId:number, formKey:string, type: string): void {

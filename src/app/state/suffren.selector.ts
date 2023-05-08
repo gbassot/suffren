@@ -68,12 +68,15 @@ export const selectGrandTotal = createSelector(
   selectSuffren,
   (suffren) => {
     let totalPrice = 0;
+    let totalPriceWithoutDiscount = 0;
     let totalCost = 0;
     suffren.tableau.forEach((line) => {
-      totalPrice += line.totalPrice
-      totalCost += line.totalCost
+      totalPrice += line.totalPrice??0
+      totalPriceWithoutDiscount += line.totalPriceWithoutDiscount??0
+      totalCost += line.totalCost??0
     });
-    return {totalPrice, totalCost, margin: Math.round((totalPrice-totalCost)/totalCost*100)};
+    const globalDicount = Math.round((totalPriceWithoutDiscount-totalPrice)/totalPriceWithoutDiscount*100)
+    return {totalPrice, totalPriceWithoutDiscount,globalDicount, totalCost, margin: Math.round((totalPrice-totalCost)/totalCost*100)};
   }
 );
 

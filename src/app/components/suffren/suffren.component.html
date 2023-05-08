@@ -51,9 +51,8 @@
       >
         <div class="line-summary" (contextmenu)="onLinkRightClicked(index, null, null, $event)"
              [pTooltip]="(subForms$|async)?.showHelp?.show?'Clic droit pour le menu contextuel à la ligne':''" tooltipPosition="top">
-          <div class="row" cdkDragHandle>
+          <div class="row" cdkDragHandle (dblclick)="editLine($event, index,'productForm')">
             <div class="col-4 ps-3 text-start"
-                 (dblclick)="editLine(index,'productForm')"
                  [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic la description pour éditer le produit':''"
             >
               <div class="flex justify-content-center gap-2">
@@ -64,17 +63,19 @@
             <div class="col-1 text-end">{{line.quantity}}P</div>
             <div class="col-4 text-end"></div>
             <div class="col-1 text-end"
-                 (dblclick)="editLine(index,'priceForm')"
+                 (dblclick)="editLine($event, index,'priceForm')"
                  [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic sur le prix pour éditer le prix':''"
             >{{line.unitPrice| currency:'EUR'}}</div>
-            <div class="col-1 text-end"><p-badge [value]="line.margin+'%'" [severity]="line.margin<10?'danger':line.margin<20?'warning':'success'"></p-badge></div>
+            <div class="col-1 text-end" (dblclick)="editLine($event, index,'discountForm')">
+              <p-badge *ngIf="line.relativeMargin" [value]="line.relativeMargin+'%'" [severity]="line.relativeMargin<10?'danger':line.relativeMargin<20?'warning':'success'"></p-badge>
+            </div>
             <div class="col-1 text-end fw-bold pe-3"
-                 (dblclick)="editLine(index,'discountForm')"
+                 (dblclick)="editLine($event, index,'discountForm')"
                  [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic sur le total pour attribuer une remise':''"
             >
               <div *ngIf="line.discount">
                 <p-badge *ngIf="line.discount" [value]="'-'+line.discount+'%'" severity="info"></p-badge>&nbsp;
-                <span class="text-decoration-line-through fw-normal text-muted">({{(line.totalPrice+line.totalDiscount)|currency:'EUR'}})</span>
+                <span class="text-decoration-line-through fw-normal text-muted">({{(line.totalPriceWithoutDiscount)|currency:'EUR'}})</span>
               </div>
               <div>{{line.totalPrice | currency:'EUR'}}</div>
             </div>
@@ -106,11 +107,18 @@
               </div>
               <div class="col-1 text-end">x{{component.quantity}}</div>
               <div class="col-4 text-end"></div>
-              <div class="col-1 text-end">{{component.unitPrice| currency:'EUR'}}</div>
-              <div class="col-1 text-end bg-opacity-10">
-                <span [ngClass]="component.margin<10?'text-danger':component.margin<20?'text-primary':'text-success'">{{component.margin}}%</span>
+              <div class="col-1 text-end" (dblclick)="editLine($event, index,'priceForm')">
+                {{component.unitPriceDiscounted| currency:'EUR'}}
               </div>
-              <div class="col-1 text-end fw-semibold pe-3">{{component.total | currency:'EUR'}}</div>
+              <div class="col-1 text-end bg-opacity-10" (dblclick)="editLine($event, index,'discountForm')">
+                <span *ngIf="component.relativeMargin"
+                      [ngClass]="component.relativeMargin<10?'text-danger':component.relativeMargin<20?'text-primary':'text-success'">
+                  {{component.relativeMargin}}%
+                </span>
+              </div>
+              <div class="col-1 text-end fw-semibold pe-3" (dblclick)="editLine($event, index,'priceForm')">
+                {{component.totalPrice | currency:'EUR'}}
+              </div>
             </div>
           </ng-container>
         </div>
@@ -123,7 +131,15 @@
         <div class="col-1 text-end"><p-badge
           size="large"
           [value]="((grandTotal$|async)?.margin??'')+'%'" [severity]="((grandTotal$|async)?.margin??0)<10?'danger':((grandTotal$|async)?.margin??0)<20?'warning':'success'"></p-badge></div>
-        <div class="col-2 text-end fw-bolder fs-5 text-dark">{{ ((grandTotal$|async)?.totalPrice| currency:'EUR') }}</div>
+        <div class="col-2 text-end fw-bolder fs-5 text-dark">
+          <div *ngIf="(grandTotal$|async)?.totalPriceWithoutDiscount !== (grandTotal$|async)?.totalPrice" class="text-muted text-decoration-line-through fs-6">
+            {{ ((grandTotal$|async)?.totalPriceWithoutDiscount| currency:'EUR') }}
+          </div>
+          <div *ngIf="(grandTotal$|async)?.totalPriceWithoutDiscount !== (grandTotal$|async)?.totalPrice" class="text-muted fs-6">
+            {{ -(((grandTotal$|async)?.totalPriceWithoutDiscount??0)-((grandTotal$|async)?.totalPrice??0))| currency:'EUR' }}
+          </div>
+          <div>{{ ((grandTotal$|async)?.totalPrice| currency:'EUR') }}</div>
+        </div>
       </div>
     </div>
   </div>

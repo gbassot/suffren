@@ -1,0 +1,13 @@
+<div *ngFor="let opportunity of opportunities$|async; let index=index" class="row">
+  <div class="col-4 opportunity-card">
+    <p-card [header]="'Opportunité #'+opportunity.id+' : '+opportunity.reference">
+      <div class="d-inline-flex" *ngFor="let version of opportunity.versions; let versionIndex=index">
+        <div *ngIf="versionIndex>0" class="me-1 ms-1"><i class="pi pi-arrow-right"></i></div>
+        <a routerLink="/suffren" (click)="selectOpportunity(index)">
+          <p-tag [value]="version.name" [rounded]="true" [severity]="version.type==='bt'?'success':(version.type==='devis'?'primary':'warning')"></p-tag>
+        </a>
+      </div>
+    </p-card>
+  </div>
+</div>
+

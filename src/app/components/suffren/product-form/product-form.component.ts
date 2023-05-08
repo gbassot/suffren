@@ -158,7 +158,7 @@ export class ProductFormComponent extends AbstractFormComponent{
       {code:'tournage', label:"Tournage", price:10, cost:5},
     ]
     const component:IComponent = {
-      description: "Service inconnu", margin: 0, quantity: 1, total: 0, type: "service", unitCost: 0, unitPrice: 0
+      description: "Service inconnu", quantity: 1, type: "service", unitCost: 0, unitPrice: 0
     }
     serviceDefinitions.forEach((service)=> {
       if(service.code === type) {

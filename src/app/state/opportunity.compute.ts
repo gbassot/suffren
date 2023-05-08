@@ -1,6 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
-import {OpportunityActions, TableauApiActions} from "./opportunity.action";
-import {Opportunity} from "../model/state/opportunity.model";
+import {Opportunity} from "../model/data/opportunity.model";
 import {Line} from "../model/data/line.model";
 import {IComponent, IProduitLong, IProduitPlat, IPSP, ProductType} from "../model/data/icomponent.model";
 
@@ -10,7 +8,7 @@ export class OpportunityCompute {
   public static addToHistory(state:Opportunity): ReadonlyArray<Opportunity> {
     const newHistory = [...state.history];
     newHistory.splice(state.historyStep)
-    newHistory.push({tableau : state.tableau, history:[], historyStep:-1});
+    newHistory.push({reference: state.reference, id: state.id, versions: state.versions, tableau : state.tableau, history:[], historyStep:-1});
     return newHistory;
   }
 
@@ -43,31 +41,38 @@ export class OpportunityCompute {
       }
     }
 
-    const components = line.components.map((component) => this.calculateComponent(component))
+    const components = line.components.map((component) => this.calculateComponent(component, line))
     let totalCost= 0
     let totalPrice= 0
+    let totalDiscount= 0
     let quantity= 0
     let warning: string|undefined
     components.forEach((component)=> {
-      totalCost+=component.quantity*component.unitCost
-      totalPrice+=component.total
+      totalCost+=component.totalCost??0
+      totalPrice+=component.totalPriceWithoutDiscount??0
+      totalDiscount+=component.totalDiscount??0
       if(line.components.find((c)=>Object.values(ProductType).find((t)=>t===component.type))) {
         quantity = component.quantity
       }
-      if(component.type==='service' && component.description==='Découpe' && component.total==0) {
+      if(component.type==='service' && component.description==='Découpe' && (component.totalPrice??0)===0) {
         warning='Découpe offerte'
       }
     })
-    const totalDiscount = totalPrice*(line.discount/100)
+    const totalPriceWithoutDiscount = totalPrice
     totalPrice = totalPrice-totalDiscount
+
     return {...line,
       id:`${index+1}`,
       totalPrice,
       totalCost,
       totalDiscount,
-      margin:Math.round((totalPrice-totalCost)/totalCost*100),
+      totalPriceWithoutDiscount,
+      relativeMargin:Math.round((totalPrice-totalCost)/totalCost*100),
+      absoluteMargin:Math.round(totalPrice-totalCost),
       quantity,
-      unitPrice:totalPrice/quantity,
+      unitPrice:totalPriceWithoutDiscount/quantity,
+      unitPriceDiscounted:totalPrice/quantity,
+      unitPriceWithoutDiscount: totalPriceWithoutDiscount/quantity,
       unitCost:totalCost/quantity,
       description,
       components,
@@ -75,7 +80,7 @@ export class OpportunityCompute {
     };
   }
 
-  public static calculateComponent(component:IComponent): IComponent {
+  public static calculateComponent(component:IComponent, line: Line): IComponent {
     let description='';
     switch(component.type) {
       case "long":
@@ -91,8 +96,30 @@ export class OpportunityCompute {
     if(component.type ==='service') {
       description = `${component.description}`;
     }
-    const total = Math.round(component.unitPrice * component.quantity *100)/100;
-    return {...component,total, description, margin: Math.round((component.unitPrice-component.unitCost)/component.unitCost*100)};
+
+    const unitPriceWithoutDiscount = (component.unitPrice??0)
+    const unitDiscount = unitPriceWithoutDiscount * line.discount / 100
+    const unitPriceDiscounted = unitPriceWithoutDiscount - unitDiscount
+    const totalPrice = unitPriceDiscounted * component.quantity
+    const totalCost = (component.unitCost??0) * component.quantity
+    const totalPriceWithoutDiscount = unitPriceWithoutDiscount * component.quantity
+    const totalDiscount = totalPriceWithoutDiscount * line.discount / 100
+    const absoluteMargin = totalPrice-totalCost
+    const relativeMargin = Math.round((totalPrice - totalCost) / (totalCost) * 100)
+
+    return {
+      ...component,
+      unitPriceWithoutDiscount,
+      unitPriceDiscounted,
+      unitDiscount,
+      absoluteMargin,
+      relativeMargin,
+      totalPriceWithoutDiscount,
+      totalPrice,
+      totalCost,
+      totalDiscount,
+      description,
+    }
   }
 }
 

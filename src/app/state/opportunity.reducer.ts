@@ -1,11 +1,14 @@
 import { createReducer, on } from '@ngrx/store';
-import {OpportunityActions, TableauApiActions} from "./opportunity.action";
-import {Opportunity} from "../model/state/opportunity.model";
+import {OpportunityActions} from "./opportunity.action";
+import {Opportunity} from "../model/data/opportunity.model";
 import {Line} from "../model/data/line.model";
 import {OpportunityCompute} from "./opportunity.compute";
 
 
 export const initialState: Opportunity = {
+  reference:'',
+  id:0,
+  versions:[],
   tableau:[],
   history:[],
   historyStep:0
@@ -13,8 +16,8 @@ export const initialState: Opportunity = {
 
 export const opportunityReducer = createReducer(
   initialState,
-  on(TableauApiActions.retrievedTableauList, (_state, { tableau }) =>{
-    tableau = tableau.map((line,index)=>OpportunityCompute.calculateLine(line, index))
+  on(OpportunityActions.loadOpportunity, (_state, { opportunity }) =>{
+    const tableau = opportunity.tableau.map((line,index)=>OpportunityCompute.calculateLine(line, index))
     return {..._state, tableau};
   }),
   on(OpportunityActions.reorderLine, (_state, { previous, current }) => {
@@ -41,14 +44,12 @@ export const opportunityReducer = createReducer(
     return {..._state, tableau: newTableau, history:OpportunityCompute.addToHistory(_state), historyStep:_state.historyStep+1};
   }),
   on(OpportunityActions.addLine, (_state, { index }) => {
-    console.log(index)
     const line: Line = {
       id: '0',
       description: '',
       totalPrice: 0,
       totalCost: 0,
       totalDiscount:0,
-      margin: 1,
       unitCost:0, unitPrice:0, quantity:0,discount:0,
       components:[]
     }

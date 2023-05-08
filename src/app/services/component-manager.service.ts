@@ -25,7 +25,7 @@ export class ComponentManagerService {
       take(1),
       tap(([line, index])=>{
         let base: IComponent = {
-          description: "", margin: 0, quantity: 0, total: 0, type: 'material', unitCost: 0, unitPrice: 0
+          description: "", quantity: 0, type: 'material', unitCost: 0, unitPrice: 0
         }
         switch (type) {
           case ProductType.long:

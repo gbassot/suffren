@@ -9,8 +9,10 @@ import {
   selectCurrentLineIndex,
   selectSubForms
 } from "../../../state/suffren.selector";
-import {filter, switchMap, take, takeUntil, tap} from "rxjs/operators";
+import {bufferTime, filter, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import {Subject} from "rxjs";
+import {Router} from "@angular/router";
+import {QuoteActions} from "../../../state/quote.action";
 
 @Component({
   selector: 'app-keyboard-nav',
@@ -70,6 +72,18 @@ export class KeyboardNavComponent implements OnInit, OnDestroy{
         }
         break;
       case 'Escape':
+        this.escapePressed$.next(true);
+        this.escapePressed$.pipe(
+          bufferTime(300),
+          tap((data) =>{
+            if(data.length>0) {
+              this.store.dispatch(QuoteActions.selectOpportunity({index:-1}))
+              this.router.navigate(['/']);
+            }
+          }),
+          take(1)
+        ).subscribe()
+
         this.store.dispatch(SuffrenActions.escapePressed({bool: true}))
         break;
       case 'c':
@@ -131,11 +145,13 @@ export class KeyboardNavComponent implements OnInit, OnDestroy{
   subForms$ = this.store.select(selectSubForms);
   destroy$ = new Subject();
   currentLineIndex: number|null = null;
+  escapePressed$ = new Subject<boolean>()
 
   constructor(
     private store: Store,
     private componentManager: ComponentManagerService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -143,6 +159,7 @@ export class KeyboardNavComponent implements OnInit, OnDestroy{
        takeUntil(this.destroy$),
        tap((index)=>this.currentLineIndex=index)
      ).subscribe()
+
   }
 
   ngOnDestroy(): void {

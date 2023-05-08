@@ -62,7 +62,6 @@ export class LineComponent implements OnInit, OnDestroy{
         unitPrice:[materialComponent.unitPrice],
         quantity:[materialComponent.quantity],
         totalPrice:[this.line.totalPrice],
-        margin:[this.line.margin]
       });
     }
   }
@@ -84,7 +83,7 @@ export class LineComponent implements OnInit, OnDestroy{
           if((this.previousCell !== activeCell.cellIndex || this.previousLine !== activeCell.lineIndex) && this.lineForm) {
             const data = this.lineForm.value;
             let newMaterialComponent: IProduitLong = {
-              description: "", quantity: data.quantity, total: 0, unitPrice: data.unitPrice,unitCost:2, margin:0,
+              description: "", quantity: data.quantity, unitPrice: data.unitPrice,unitCost:2,
               type:ProductType.long,
               shape:data.shape,
               grade: data.grade,
@@ -100,7 +99,6 @@ export class LineComponent implements OnInit, OnDestroy{
               totalPrice: 0,
               totalCost: 0,
               totalDiscount:0,
-              margin: data.margin,
               unitCost:0, unitPrice:0, quantity:0,discount:0,
               components
             }

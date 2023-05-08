@@ -1,11 +1,13 @@
 import { createActionGroup, props } from '@ngrx/store';
 import {Line} from "../model/data/line.model";
 import {IComponent} from "../model/data/icomponent.model";
+import {Opportunity} from "../model/data/opportunity.model";
 
 
 export const OpportunityActions = createActionGroup({
   source: 'Tableau',
   events: {
+    'Load Opportunity': props<{ opportunity: Opportunity }>(),
     'Add Line': props<{ index:number|null }>(),
     'Remove Line': props<{ index: number }>(),
     'Copy Line': props<{ index: number }>(),
@@ -18,12 +20,5 @@ export const OpportunityActions = createActionGroup({
     'Reorder Component': props<{ lineIndex: number, previous: number; current: number }>(),
     'Rewind History': props<{ step: number }>(),
     'Update Discount Line': props<{ discount: number, index:number }>(),
-  },
-});
-
-export const TableauApiActions = createActionGroup({
-  source: 'Tableau API',
-  events: {
-    'Retrieved Tableau List': props<{ tableau: ReadonlyArray<Line> }>(),
   },
 });

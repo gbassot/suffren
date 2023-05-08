@@ -13,13 +13,13 @@
   <div class="row">
     <div class="col-8">
       <ul>
-        <li>Prix unitaire de base : {{(line.totalPrice+line.totalDiscount)/line.quantity | currency:'EUR'}}</li>
+        <li>Prix unitaire de base : {{line.unitPrice | currency:'EUR'}}</li>
         <li>Cout de revient unitaire : {{line.unitCost | currency:'EUR'}}</li>
         <li>Cout de revient de la ligne : {{line.totalCost | currency:'EUR'}}</li>
-        <li>Montant de la ligne avant remise : {{line.totalPrice+line.totalDiscount | currency:'EUR'}}</li>
+        <li>Montant de la ligne avant remise : {{line.totalPriceWithoutDiscount | currency:'EUR'}}</li>
         <li>Montant de la remise : -{{line.totalDiscount | currency:'EUR'}}</li>
         <li>Montant de la ligne apres remise : {{line.totalPrice | currency:'EUR'}}</li>
-        <li>Marge apres remise : {{line.margin}}%</li>
+        <li>Marge apres remise : {{line.relativeMargin}}%</li>
       </ul>
     </div>
     <div class="col-4">

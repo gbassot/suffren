@@ -62,6 +62,12 @@ import {CommentFormComponent} from "./components/suffren/comment-form/comment-fo
 import {CommercialFormComponent} from "./components/suffren/commercial-form/commercial-form.component";
 import {ProductionFormComponent} from "./components/suffren/production-form/production-form.component";
 import {CheckboxModule} from "primeng/checkbox";
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import {BreadcrumbModule} from "primeng/breadcrumb";
+import {quoteReducer} from "./state/quote.reducer";
+import {TimelineModule} from "primeng/timeline";
+import {TagModule} from "primeng/tag";
+import {CardModule} from "primeng/card";
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -88,7 +94,8 @@ registerLocaleData(localeFr);
     ProductSelectorComponent,
     CommentFormComponent,
     CommercialFormComponent,
-    ProductionFormComponent
+    ProductionFormComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -97,7 +104,8 @@ registerLocaleData(localeFr);
     StoreModule.forRoot({
       opportunity: opportunityReducer, //etat de l'opportunité
       display: displayReducer, //etat lié à l'affichage
-      suffren: suffrenReducer // etat pour l'affichage de suffren
+      suffren: suffrenReducer, // etat pour l'affichage de suffren
+      quote: quoteReducer // etat pour la gestion de tout l'etat client
     }),
     HttpClientModule,
     DropdownModule,
@@ -130,6 +138,10 @@ registerLocaleData(localeFr);
     TabViewModule,
     RippleModule,
     CheckboxModule,
+    BreadcrumbModule,
+    TimelineModule,
+    TagModule,
+    CardModule,
   ],
   providers: [ { provide: LOCALE_ID, useValue: 'fr-FR' }, MessageService ],
   bootstrap: [AppComponent]
