@@ -6,7 +6,7 @@ import {QuoteState} from "../model/state/quote-state.model";
 import {QuoteActions} from "./quote.action";
 
 export const initialState: QuoteState = {
-  activeOpportunity: 0,
+  activeOpportunity: -1,
   opportunities: []
 };
 
@@ -15,8 +15,11 @@ export const quoteReducer = createReducer(
   on(QuoteActions.loadOpportunities, (_state, { opportunities }) =>{
     return {..._state, opportunities};
   }),
-
   on(QuoteActions.selectOpportunity, (_state, { index }) =>{
     return {..._state, activeOpportunity: index};
+  }),
+  on(QuoteActions.selectOpportunityById, (_state, { id }) =>{
+    const activeOpportunity =_state.opportunities.findIndex((o)=>o.id===id)
+    return {..._state, activeOpportunity};
   }),
 );

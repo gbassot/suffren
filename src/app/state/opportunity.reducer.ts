@@ -7,6 +7,7 @@ import {OpportunityCompute} from "./opportunity.compute";
 
 export const initialState: Opportunity = {
   reference:'',
+  lastUpdate:'',
   id:0,
   versions:[],
   tableau:[],

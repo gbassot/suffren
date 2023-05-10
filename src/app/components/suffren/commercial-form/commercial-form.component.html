@@ -3,6 +3,7 @@
   (onHide)="closed()"
   [closeOnEscape]="false"
   [style]="{width: '40vw'}"
+  position="bottom-right"
   *ngIf="currentLine$|async as line">
   <ng-template pTemplate="header">
     <span class="text-xl font-bold fw-bold">Paramètres Commerce de la ligne {{line.id}} {{line.description}} x {{line.quantity}}</span>

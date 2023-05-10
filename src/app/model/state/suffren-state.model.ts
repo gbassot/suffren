@@ -7,8 +7,6 @@ export class SuffrenState {
     selectedComponent: number|null
     lineDepth: number
     activeSectionDepth1: number
-    expandComponent: boolean,
-    showHelp: boolean,
   }
   subForms: {
     discountForm: Display

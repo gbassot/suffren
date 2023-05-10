@@ -10,8 +10,6 @@ export const initialState: SuffrenState = {
     selectedLine: 0,
     selectedComponent: null,
     lineDepth: 0,
-    expandComponent:true,
-    showHelp:false,
   },
   subForms: {
     discountForm: {show:false},

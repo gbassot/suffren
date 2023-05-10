@@ -90,8 +90,8 @@ export class KeyboardNavComponent implements OnInit, OnDestroy{
         if(event.ctrlKey && this.currentLineIndex!==null) {
           this.messageService.add({ severity: 'success', summary: `Ligne ${this.currentLineIndex+1} copiée`, detail: `Ligne ${this.currentLineIndex+2} sélectionnée`});
           this.store.dispatch(OpportunityActions.copyLine({ index:this.currentLineIndex }))
+          event.preventDefault()
         }
-        event.preventDefault()
         break;
       case 'z':
         if(event.ctrlKey) {

@@ -6,7 +6,7 @@ import {DashboardComponent} from "./components/dashboard/dashboard.component";
 
 const routes: Routes = [
   { path: 'excel', component: ExcelComponent },
-  { path: 'suffren', component: SuffrenComponent, data:{ animationState: 'Suffren' } },
+  { path: 'suffren/:id', component: SuffrenComponent, data:{ animationState: 'Suffren' } },
   { path: '', component: DashboardComponent, data:{ animationState: 'Dashboard' }},
 ];
 

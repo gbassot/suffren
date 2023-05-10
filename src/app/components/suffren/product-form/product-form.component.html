@@ -4,9 +4,10 @@
   (onShow)="show()"
   [closeOnEscape]="false"
   [style]="{width: '60vw'}"
+  position="bottom-right"
   *ngIf="currentLine$ | async as line">
   <ng-template pTemplate="header">
-    <span class="text-xl font-bold fw-bold">Ligne {{line.id}}</span>
+    <span class="text-xl font-bold fw-bold">Recueil du besoin client : ligne {{line.id}}</span>
   </ng-template>
   <p>
     Dialogue spécialisé dans la selection du produit de type "{{material?.type}}".

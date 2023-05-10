@@ -8,7 +8,7 @@ export class OpportunityCompute {
   public static addToHistory(state:Opportunity): ReadonlyArray<Opportunity> {
     const newHistory = [...state.history];
     newHistory.splice(state.historyStep)
-    newHistory.push({reference: state.reference, id: state.id, versions: state.versions, tableau : state.tableau, history:[], historyStep:-1});
+    newHistory.push({reference: state.reference, id: state.id, versions: state.versions, lastUpdate: state.lastUpdate, tableau : state.tableau, history:[], historyStep:-1});
     return newHistory;
   }
 

@@ -7,6 +7,7 @@ export const QuoteActions = createActionGroup({
   events: {
     'Load Opportunities': props<{ opportunities: Opportunity[] }>(),
     'Select Opportunity': props<{ index: number }>(),
+    'Select Opportunity By Id': props<{ id: number }>(),
   },
 });
 

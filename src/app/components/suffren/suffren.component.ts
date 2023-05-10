@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {selectTableau} from "../../state/tableau.selector";
-import {takeUntil, tap} from "rxjs/operators";
+import {map, switchMap, takeUntil, tap} from "rxjs/operators";
 import {combineLatest, Subject} from "rxjs";
 import {SuffrenActions} from "../../state/suffren.action";
 import {
@@ -15,8 +15,9 @@ import {ContextMenu} from "primeng/contextmenu";
 import {IComponent, ProductType} from "../../model/data/icomponent.model";
 import {ComponentManagerService} from "../../services/component-manager.service";
 import {RightClickService} from "../../services/right-click.service";
-import {selectCurrentOpportunity} from "../../state/quote.selector";
-import {Router} from "@angular/router";
+import {selectAllOpportunities, selectCurrentOpportunity} from "../../state/quote.selector";
+import {ActivatedRoute, Router} from "@angular/router";
+import {QuoteActions} from "../../state/quote.action";
 
 @Component({
   selector: 'app-suffren',
@@ -43,7 +44,8 @@ export class SuffrenComponent implements OnInit, OnDestroy{
     private store: Store,
     private componentManager: ComponentManagerService,
     private rightClick: RightClickService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   sideBarClosed(): void {
@@ -66,13 +68,19 @@ export class SuffrenComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
+    this.route.paramMap.pipe(
+      map((data)=>this.store.dispatch(QuoteActions.selectOpportunityById({id:parseInt(data.get('id')??'0')}))),
+      switchMap(()=>this.opportunity$),
+      tap((opportunity) => {if(!opportunity) {
+        this.router.navigate(['/'])
+      }})
+    ).subscribe()
+
     this.opportunity$.pipe(
       takeUntil(this.destroy$),
       tap((opportunity)=> {
         if(opportunity) {
           this.store.dispatch(OpportunityActions.loadOpportunity({opportunity}));
-        } else {
-          this.router.navigate(['/'])
         }
       })
     ).subscribe();

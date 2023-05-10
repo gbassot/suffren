@@ -29,7 +29,7 @@
 &nbsp;
 
 <div class="row mt-3">
-  <div class="col-8"
+  <div class="col-9"
      cdkDropList
      (cdkDropListDropped)="drop($event)"
   >
@@ -37,8 +37,9 @@
       <div class="row fw-semibold text-muted">
         <div class="col-4 text-center">Description</div>
         <div class="col-1 text-end">Quantité</div>
-        <div class="col-4 text-end"></div>
+        <div class="col-3 text-end"></div>
         <div class="col-1 text-end">Prix unitaire</div>
+        <div class="col-1 text-end">Remise</div>
         <div class="col-1 text-end">Marge</div>
         <div class="col-1 text-end pe-3">Total</div>
       </div>
@@ -61,20 +62,29 @@
               </div>
               </div>
             <div class="col-1 text-end">{{line.quantity}}P</div>
-            <div class="col-4 text-end"></div>
+            <div class="col-3 text-end"></div>
             <div class="col-1 text-end"
                  (dblclick)="editLine($event, index,'priceForm')"
                  [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic sur le prix pour éditer le prix':''"
-            >{{line.unitPrice| currency:'EUR'}}</div>
+            >
+              <div *ngIf="line.discount">
+                <span class="text-decoration-line-through fw-normal text-muted">({{(line.unitPrice)|currency:'EUR'}})</span>
+              </div>
+              {{line.unitPriceDiscounted| currency:'EUR'}}
+            </div>
+            <div class="col-1 text-end" (dblclick)="editLine($event, index,'discountForm')">
+              <div *ngIf="line.discount">
+                <p-badge *ngIf="line.discount" [value]="'-'+line.discount+'%'" severity="info"></p-badge>&nbsp;
+              </div>
+            </div>
             <div class="col-1 text-end" (dblclick)="editLine($event, index,'discountForm')">
               <p-badge *ngIf="line.relativeMargin" [value]="line.relativeMargin+'%'" [severity]="line.relativeMargin<10?'danger':line.relativeMargin<20?'warning':'success'"></p-badge>
             </div>
             <div class="col-1 text-end fw-bold pe-3"
-                 (dblclick)="editLine($event, index,'discountForm')"
+                 (dblclick)="editLine($event, index,'priceForm')"
                  [pTooltip]="(subForms$|async)?.showHelp?.show?'Double clic sur le total pour attribuer une remise':''"
             >
               <div *ngIf="line.discount">
-                <p-badge *ngIf="line.discount" [value]="'-'+line.discount+'%'" severity="info"></p-badge>&nbsp;
                 <span class="text-decoration-line-through fw-normal text-muted">({{(line.totalPriceWithoutDiscount)|currency:'EUR'}})</span>
               </div>
               <div>{{line.totalPrice | currency:'EUR'}}</div>
@@ -106,9 +116,11 @@
                 </ng-container>
               </div>
               <div class="col-1 text-end">x{{component.quantity}}</div>
-              <div class="col-4 text-end"></div>
+              <div class="col-3 text-end"></div>
               <div class="col-1 text-end" (dblclick)="editLine($event, index,'priceForm')">
                 {{component.unitPriceDiscounted| currency:'EUR'}}
+              </div>
+              <div class="col-1 text-end" (dblclick)="editLine($event, index,'discountForm')">
               </div>
               <div class="col-1 text-end bg-opacity-10" (dblclick)="editLine($event, index,'discountForm')">
                 <span *ngIf="component.relativeMargin"
