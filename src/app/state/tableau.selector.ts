@@ -1,5 +1,5 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import {Opportunity} from "../model/state/opportunity.model";
+import {Opportunity} from "../model/data/opportunity.model";
 import {DisplayState} from "../model/state/display-state.model";
 import {ActiveCell} from "../model/display/active-cell.model";
 

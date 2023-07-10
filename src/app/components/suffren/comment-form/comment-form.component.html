@@ -1,0 +1,27 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="closed()"
+  [closeOnEscape]="false"
+  [style]="{width: '40vw'}"
+  position="bottom-right"
+  *ngIf="currentLine$|async as line">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold fw-bold">Commentaires de {{line.id}} {{line.description}} x {{line.quantity}}</span>
+  </ng-template>
+  <p>
+    Dialogue spécialisé dans les commentaires de la ligne.
+  </p>
+  <div class="row">
+    <div class="col-6">
+      <input pInputText id="duty"/>
+    </div>
+    <div class="col-6 d-inline-flex">
+      <p-checkbox [binary]="true" inputId="binary" label="ALL"></p-checkbox>&nbsp;
+      <p-checkbox [binary]="true" inputId="binary" label="BC"></p-checkbox>&nbsp;
+      <p-checkbox [binary]="true" inputId="binary" label="BT"></p-checkbox>&nbsp;
+      <p-checkbox [binary]="true" inputId="binary" label="EAC"></p-checkbox>&nbsp;
+      <p-checkbox [binary]="true" inputId="binary" label="BL"></p-checkbox>
+      <p-checkbox [binary]="true" inputId="binary" label="BF"></p-checkbox>
+    </div>
+  </div>
+</p-dialog>

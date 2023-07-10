@@ -1,7 +1,6 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {OpportunityActions, TableauApiActions} from "../../state/opportunity.action";
-import {Line} from "../../model/data/line.model";
+import {OpportunityActions} from "../../state/opportunity.action";
 import {
   selectActiveCell,
   selectCellDefinitions, selectHistory, selectHistoryStep,
@@ -60,24 +59,7 @@ export class ExcelComponent implements OnInit, OnDestroy{
   destroy$ = new Subject();
 
   addLine(event:any, index: number) {
-    const line: Line = {
-      id: (index+1).toString(),
-      description: '',
-      totalPrice: 0,
-      totalCost: 0,
-      margin: 1,
-      unitCost:0, unitPrice:0, quantity:0,
-      components:[{
-        type:'material',
-        description:'test',
-        unitPrice:0,
-        unitCost:0,
-        quantity:0,
-        total:0,
-        margin:0
-      }]
-    }
-    this.store.dispatch(OpportunityActions.addLine({line, index:null}));
+    this.store.dispatch(OpportunityActions.addLine({index:null}));
     event.stopPropagation();
   }
 

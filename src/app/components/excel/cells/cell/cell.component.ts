@@ -14,7 +14,7 @@ import {ActiveCell} from "../../../../model/display/active-cell.model";
   templateUrl: './cell.component.html',
   styleUrls: ['./cell.component.scss']
 })
-export class CellComponent  implements OnInit, OnDestroy{
+export class CellComponent implements OnInit, OnDestroy{
   @Input() cellDefinition: CellDefinition;
   @Input() line: Line;
   @Input() cellIndex: number;

@@ -1,9 +1,12 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {selectActiveSectionDepth1, selectCurrentLine} from "../../../state/suffren.selector";
+import {selectActiveSectionDepth1, selectCurrentLine, selectCurrentLineIndex} from "../../../state/suffren.selector";
 import {Store} from "@ngrx/store";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {take, takeUntil, tap} from "rxjs/operators";
 import {debounceTime, Subject} from "rxjs";
+import {Line} from "../../../model/data/line.model";
+import {OpportunityActions} from "../../../state/opportunity.action";
+import {IComponent, IProduitLong, ProductType} from "../../../model/data/icomponent.model";
 
 @Component({
   selector: 'app-line-form',
@@ -16,6 +19,7 @@ export class LineFormComponent implements OnInit, OnDestroy{
   @ViewChild('secondInput') secondInput!: ElementRef;
 
   currentLine$ = this.store.select(selectCurrentLine);
+  currentLineIndex$ = this.store.select(selectCurrentLineIndex);
   activeSectionDepth1$ = this.store.select(selectActiveSectionDepth1);
   destroy$ = new Subject();
   formChanged$ = new Subject();
@@ -32,23 +36,23 @@ export class LineFormComponent implements OnInit, OnDestroy{
       takeUntil(this.destroy$),
       tap((line)=> {
         this.formChanged$.next(true);
-        const materialComponent = line?.components.find((c)=>c.type==='material')
+        const materialComponent = line?.components.find((c)=>Object.values(ProductType).find((t) => t === c.type))
         if(materialComponent) {
           this.lineForm = this.fb.group({
             id: [line?.id],
             description: [line?.description],
-            shape: [materialComponent?.shape],
-            grade: [materialComponent?.grade],
-            dimensions: [materialComponent?.dimensions],
-            lengthType: [materialComponent?.lengthType],
-            length: [materialComponent?.length],
+            shape: [(materialComponent as IProduitLong)?.shape],
+            grade: [(materialComponent as IProduitLong)?.grade],
+            dimensions: [(materialComponent as IProduitLong)?.dimensions],
+            lengthType: [(materialComponent as IProduitLong)?.lengthType],
+            length: [(materialComponent as IProduitLong)?.length],
             unitPrice: [materialComponent?.unitPrice],
             unitPriceSystem: [materialComponent?.unitPrice],
             quantity: [materialComponent?.quantity],
           });
           this.lineForm.valueChanges.pipe(
             takeUntil(this.formChanged$),
-            tap()
+            tap((data) => console.log(data))
           ).subscribe();
         }
       })
@@ -61,6 +65,7 @@ export class LineFormComponent implements OnInit, OnDestroy{
         switch (section) {
           case 0:
             this.firstInput?.nativeElement.focus()
+            this.firstInput?.nativeElement.select()
             break;
           case 1:
             this.secondInput?.nativeElement.click()
@@ -70,6 +75,36 @@ export class LineFormComponent implements OnInit, OnDestroy{
     ).subscribe();
   }
 
+  focusOut(line: Line, index: number): void {
+    const data = this.lineForm.value;
+    const materialComponent = line.components.find((c) => Object.values(ProductType).find((t) => t === c.type))
+    if(materialComponent) {
+      const newMaterialComponent = {
+        ...materialComponent,
+        shape:data.shape,
+        dimensions:data.dimensions,
+        grade:data.grade,
+        length:data.length,
+        lengthType:data.lengthType,
+        unitPrice:data.unitPrice,
+        quantity:data.quantity,
+      }
+      const components: IComponent[]=[]
+      line?.components.forEach((c) => {
+        if(c.type==='material') {
+          components.push(newMaterialComponent)
+        } else {
+          components.push(c)
+        }
+      })
+
+      const newLine = {
+        ...line,
+        components
+      }
+      this.store.dispatch(OpportunityActions.updateLine({line:newLine, index:index-1}))
+    }
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
@@ -85,6 +120,4 @@ export class LineFormComponent implements OnInit, OnDestroy{
       value:"FL"
     }
   ];
-
-
 }

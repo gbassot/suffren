@@ -1,0 +1,55 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="closed()"
+  (onShow)="show()"
+  [closeOnEscape]="false"
+  [style]="{width: '70vw'}"
+  position="top-right"
+  *ngIf="line">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold fw-bold">Construction du prix de la ligne {{line.id}} :  {{line.description}} x {{line.quantity}}</span>
+  </ng-template>
+  <p>
+    Dialogue spécialisé dans le calcul du prix de la ligne. Avec les informations pour aider à la décision.
+  </p>
+  <p-table [value]="line.components" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Composition de la ligne</th>
+        <th>Cout unitaire</th>
+        <th>Prix unitaire</th>
+        <th *ngIf="line.discount">Remise</th>
+        <th>Marge</th>
+        <th>Quantité</th>
+        <th>Prix total</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-component let-rowIndex="rowIndex">
+      <tr>
+        <td>{{ component.description }}</td>
+        <td>{{ component.unitCost|currency:'EUR' }}</td>
+        <td>
+          <form [formGroup]="formGroups[rowIndex]">
+            <p-inputNumber [inputId]="'unitPrice'+rowIndex" formControlName="unitPrice" mode="currency" currency="EUR" locale="fr-FR" (focusout)="focusOut(line)" (onFocus)="focusIn(rowIndex)"> </p-inputNumber>
+          </form>
+        </td>
+        <td *ngIf="line.discount">{{line.discount}}%<br>{{(-component.unitDiscount|currency:'EUR')}}</td>
+        <td>{{ component.quantity }} x {{((component.unitPriceDiscounted - component.unitCost)|currency:'EUR')}} <br>{{(component.absoluteMargin|currency:'EUR')}} /   {{ component.relativeMargin }}%</td>
+        <td>{{ component.quantity }}</td>
+        <td>{{ component.totalPrice|currency:'EUR' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td>{{ line.description }}</td>
+        <td>{{ line.unitCost|currency:'EUR' }}</td>
+        <td>{{ line.unitPrice|currency:'EUR' }}</td>
+        <td *ngIf="line.discount">{{line.discount}}%<br>{{(-(line.unitDiscount??0)|currency:'EUR')}}</td>
+        <td>{{(line.absoluteMargin|currency:'EUR')}} / {{ line.relativeMargin }}%</td>
+        <td>{{ line.quantity }}</td>
+        <td>{{ line.totalPrice|currency:'EUR' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</p-dialog>

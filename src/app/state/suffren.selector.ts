@@ -1,23 +1,19 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import {Opportunity} from "../model/state/opportunity.model";
-import {DisplayState} from "../model/state/display-state.model";
-import {ActiveCell} from "../model/display/active-cell.model";
 import {SuffrenState} from "../model/state/suffren-state.model";
 
-export const selectOpportunity = createFeatureSelector<Opportunity>('opportunity');
 export const selectSuffren = createFeatureSelector<SuffrenState>('suffren');
 
 export const selectCurrentLineIndex = createSelector(
   selectSuffren,
   (suffren) => {
-    return suffren.selectedLine;
+    return (suffren.main.selectedLine??-1);
   }
 );
 
-export const selectLineEntered = createSelector(
+export const selectLineDepth = createSelector(
   selectSuffren,
   (suffren) => {
-    return suffren.lineDepth;
+    return suffren.main.lineDepth;
   }
 );
 
@@ -25,34 +21,62 @@ export const selectLineEntered = createSelector(
 export const selectCurrentLine = createSelector(
   selectSuffren,
   (state) => {
-    return state.selectedLine!==null?state.tableau[state.selectedLine]:null;
+    return state.main.selectedLine!==null?state.tableau[state.main.selectedLine]:null;
+  }
+);
+
+export const selectCurrentComponent = createSelector(
+  selectSuffren,
+  (state) => {
+    return state.main.selectedLine!==null && state.main.selectedComponent!==null?
+      (state.tableau[state.main.selectedLine].components[state.main.selectedComponent]??null)
+      :null;
   }
 );
 
 export const selectActiveSectionDepth1 = createSelector(
   selectSuffren,
   (suffren) => {
-    return suffren.activeSectionDepth1;
+    return suffren.main.activeSectionDepth1;
   }
 );
 
-export const selectExpandComponent = createSelector(
+export const selectSubForms = createSelector(
   selectSuffren,
   (suffren) => {
-    return suffren.expandComponent;
+    return suffren.subForms;
   }
 );
+
+export const selectAnyFormOpened = createSelector(
+  selectSuffren,
+  (suffren) => {
+    return (
+      suffren.subForms.discountForm.show ||
+      suffren.subForms.productForm.show ||
+      suffren.subForms.priceForm.show ||
+      suffren.subForms.productSelectorForm.show ||
+      suffren.subForms.commentForm.show ||
+      suffren.subForms.commercialForm.show ||
+      suffren.subForms.productionForm.show
+    )
+  }
+);
+
 
 export const selectGrandTotal = createSelector(
   selectSuffren,
   (suffren) => {
     let totalPrice = 0;
+    let totalPriceWithoutDiscount = 0;
     let totalCost = 0;
     suffren.tableau.forEach((line) => {
-      totalPrice += line.totalPrice
-      totalCost += line.totalCost
+      totalPrice += line.totalPrice??0
+      totalPriceWithoutDiscount += line.totalPriceWithoutDiscount??0
+      totalCost += line.totalCost??0
     });
-    return {totalPrice, totalCost, margin: Math.round((totalPrice-totalCost)/totalCost*100)};
+    const globalDicount = Math.round((totalPriceWithoutDiscount-totalPrice)/totalPriceWithoutDiscount*100)
+    return {totalPrice, totalPriceWithoutDiscount,globalDicount, totalCost, margin: Math.round((totalPrice-totalCost)/totalCost*100)};
   }
 );
 

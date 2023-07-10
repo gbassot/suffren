@@ -41,6 +41,33 @@ import {DividerModule} from "primeng/divider";
 import { LineFormComponent } from './components/suffren/line-form/line-form.component';
 import {AccordionModule} from "primeng/accordion";
 import {MessageModule} from "primeng/message";
+import {TableModule} from "primeng/table";
+import {KnobModule} from "primeng/knob";
+import {SliderModule} from "primeng/slider";
+import {DialogModule} from "primeng/dialog";
+import { DiscountFormComponent } from './components/suffren/discount-form/discount-form.component';
+import { PriceFormComponent } from './components/suffren/price-form/price-form.component';
+import { AbstractFormComponent } from './components/suffren/abstract-form/abstract-form.component';
+import {ProductFormComponent} from "./components/suffren/product-form/product-form.component";
+import {ServiceFormComponent} from "./components/suffren/service-form/service-form.component";
+import {FocusTrapModule} from "primeng/focustrap";
+import {ToastModule} from "primeng/toast";
+import { KeyboardNavComponent } from './components/suffren/keyboard-nav/keyboard-nav.component';
+import {MessageService} from "primeng/api";
+import { HeaderComponent } from './components/suffren/header/header.component';
+import { ProductSelectorComponent } from './components/suffren/product-selector/product-selector.component';
+import {TabViewModule} from "primeng/tabview";
+import {RippleModule} from "primeng/ripple";
+import {CommentFormComponent} from "./components/suffren/comment-form/comment-form.component";
+import {CommercialFormComponent} from "./components/suffren/commercial-form/commercial-form.component";
+import {ProductionFormComponent} from "./components/suffren/production-form/production-form.component";
+import {CheckboxModule} from "primeng/checkbox";
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import {BreadcrumbModule} from "primeng/breadcrumb";
+import {quoteReducer} from "./state/quote.reducer";
+import {TimelineModule} from "primeng/timeline";
+import {TagModule} from "primeng/tag";
+import {CardModule} from "primeng/card";
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -56,7 +83,19 @@ registerLocaleData(localeFr);
     CellSwitchComponent,
     CellAutocompleteComponent,
     SuffrenComponent,
-    LineFormComponent
+    LineFormComponent,
+    DiscountFormComponent,
+    PriceFormComponent,
+    ProductFormComponent,
+    AbstractFormComponent,
+    ServiceFormComponent,
+    KeyboardNavComponent,
+    HeaderComponent,
+    ProductSelectorComponent,
+    CommentFormComponent,
+    CommercialFormComponent,
+    ProductionFormComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +104,8 @@ registerLocaleData(localeFr);
     StoreModule.forRoot({
       opportunity: opportunityReducer, //etat de l'opportunité
       display: displayReducer, //etat lié à l'affichage
-      suffren: suffrenReducer // etat pour l'affichage de suffren
+      suffren: suffrenReducer, // etat pour l'affichage de suffren
+      quote: quoteReducer // etat pour la gestion de tout l'etat client
     }),
     HttpClientModule,
     DropdownModule,
@@ -89,8 +129,21 @@ registerLocaleData(localeFr);
     DividerModule,
     AccordionModule,
     MessageModule,
+    TableModule,
+    KnobModule,
+    SliderModule,
+    DialogModule,
+    FocusTrapModule,
+    ToastModule,
+    TabViewModule,
+    RippleModule,
+    CheckboxModule,
+    BreadcrumbModule,
+    TimelineModule,
+    TagModule,
+    CardModule,
   ],
-  providers: [ { provide: LOCALE_ID, useValue: 'fr-FR' } ],
+  providers: [ { provide: LOCALE_ID, useValue: 'fr-FR' }, MessageService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

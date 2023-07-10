@@ -1,0 +1,31 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="closed()"
+  [closeOnEscape]="false"
+  [style]="{width: '40vw'}"
+  position="bottom-left"
+  *ngIf="currentLine$ | async as line">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold fw-bold">Attribution d'une remise sur la ligne {{line.id}} {{line.description}} x {{line.quantity}}</span>
+  </ng-template>
+  <p>
+    Dialogue spécialisé dans le calcul de la remise possible. Avec les informations sur les impacts.
+  </p>
+  <div class="row">
+    <div class="col-8">
+      <ul>
+        <li>Prix unitaire de base : {{line.unitPrice | currency:'EUR'}}</li>
+        <li>Cout de revient unitaire : {{line.unitCost | currency:'EUR'}}</li>
+        <li>Cout de revient de la ligne : {{line.totalCost | currency:'EUR'}}</li>
+        <li>Montant de la ligne avant remise : {{line.totalPriceWithoutDiscount | currency:'EUR'}}</li>
+        <li>Montant de la remise : -{{line.totalDiscount | currency:'EUR'}}</li>
+        <li>Montant de la ligne apres remise : {{line.totalPrice | currency:'EUR'}}</li>
+        <li>Marge apres remise : {{line.relativeMargin}}%</li>
+      </ul>
+    </div>
+    <div class="col-4">
+      <p-knob [(ngModel)]="currentDiscount" valueTemplate="{value}%" (onChange)="slider($event, line.id)"></p-knob>
+    </div>
+  </div>
+  <p-slider [(ngModel)]="currentDiscount" class="w-full" (onChange)="slider($event, line.id)"></p-slider>
+</p-dialog>

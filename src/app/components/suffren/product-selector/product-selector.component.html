@@ -1,0 +1,53 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="closed()"
+  (onShow)="show()"
+  [closeOnEscape]="false"
+  [style]="{width: '30vw'}"
+>
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold fw-bold">Product selector</span>
+  </ng-template>
+  <p>
+    Dialogue spécialisé dans la création de produit
+  </p>
+  <p-divider align="left">
+    <div class="fw-bold">
+      Création par code forme
+    </div>
+  </p-divider>
+  <div class="row mt-5">
+    <div class="col-4">
+      <form (ngSubmit)="submitShape($event)">
+        <span class="p-float-label">
+             <p-autoComplete
+               #shapeInput
+               appendTo="body"
+               [(ngModel)]="shape"
+               id="shape"
+               name="shape"
+               [suggestions]="filteredShape" (completeMethod)="filterShape($event)"
+             ></p-autoComplete>
+           <label htmlFor="shape">Forme</label>
+    </span>
+      </form>
+    </div>
+  </div>
+  <p-divider align="left">
+    <div class="fw-bold">
+      Création par référence client
+    </div>
+  </p-divider>
+  <div class="row mt-5">
+    <div class="col-4">
+         <span class="p-float-label">
+        <input
+          pInputText
+          id="clientRef"
+          name="clientRef"
+          [(ngModel)]="clientRef"/>
+        <label htmlFor="clientRef">Référence client</label>
+    </span>
+    </div>
+  </div>
+</p-dialog>

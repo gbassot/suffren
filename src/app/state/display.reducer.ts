@@ -156,7 +156,7 @@ export const displayReducer = createReducer(
     }
     return {..._state, selectedLine:lineId};
   }),
-  on(OpportunityActions.addLine, (_state, { line }) => {
+  on(OpportunityActions.addLine, (_state, { index }) => {
     return {..._state, selectedCell:2, selectedLine: _state.tableau.length+1};
   }),
 );
